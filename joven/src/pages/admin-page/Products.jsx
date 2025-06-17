@@ -1,205 +1,216 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { db } from '../../firebase';
 import {
-  collection, getDocs, addDoc, updateDoc, deleteDoc, doc
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
-import '../../styles/admin-styles/Products.css';
+import '../../styles/Products.css';
+import ResetCounterModal from '../../components/admin-components/ResetCounterModal';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [formMode, setFormMode] = useState('add');
   const [formData, setFormData] = useState({
-    id: '', brand: '', model: '', size: '', price: '', description: ''
+    brand: '',
+    model: '',
+    price: '',
+    size: '',
+    description: '',
   });
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [viewProduct, setViewProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showResetModal, setShowResetModal] = useState(false);
+
+  const fetchProducts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'products'));
+    const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    setProducts(items);
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'products'));
-        const fetchedProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setProducts(fetchedProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
     fetchProducts();
   }, []);
 
-  const resetFormData = () => setFormData({
-    id: '', brand: '', model: '', size: '', price: '', description: ''
-  });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleFormSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const productData = {
-      brand: formData.brand,
-      model: formData.model,
-      size: formData.size,
-      price: parseFloat(formData.price),
-      description: formData.description
-    };
-
-    try {
-      if (formMode === 'add') {
-        const docRef = await addDoc(collection(db, 'products'), productData);
-        setProducts(prev => [...prev, { ...productData, id: docRef.id }]);
-      } else {
-        await updateDoc(doc(db, 'products', formData.id), productData);
-        setProducts(prev =>
-          prev.map(p => (p.id === formData.id ? { ...p, ...productData } : p))
-        );
+    if (isEditMode && selectedProduct) {
+      await updateDoc(doc(db, 'products', selectedProduct.id), formData);
+    } else {
+      const counterRef = doc(db, 'metadata', 'productCounter');
+      const counterSnap = await getDoc(counterRef);
+      let newId = 1;
+      if (counterSnap.exists()) {
+        newId = counterSnap.data().current + 1;
       }
-
-      setIsFormModalOpen(false);
-      resetFormData();
-    } catch (error) {
-      console.error("Error saving product:", error);
+      await addDoc(collection(db, 'products'), {
+        ...formData,
+        createdAt: serverTimestamp(),
+        productId: newId,
+      });
+      await setDoc(counterRef, { current: newId });
     }
+    setIsModalOpen(false);
+    fetchProducts();
   };
 
-  const handleAddProduct = () => {
-    setFormMode('add');
-    resetFormData();
-    setIsFormModalOpen(true);
-  };
-
-  const handleEditProduct = (product) => {
-    setFormMode('edit');
-    setFormData(product);
-    setIsFormModalOpen(true);
-  };
-
-  const handleDeleteProduct = async (productId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this product? This action cannot be undone.');
-    if (!confirmDelete) return;
-
-    try {
-      await deleteDoc(doc(db, 'products', productId));
-      setProducts(prev => prev.filter(p => p.id !== productId));
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
-
-  const handleViewDetails = (product) => {
+  const handleEdit = (product) => {
     setSelectedProduct(product);
+    setFormData({
+      brand: product.brand,
+      model: product.model,
+      price: product.price,
+      size: product.size,
+      description: product.description,
+    });
+    setIsEditMode(true);
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedProduct(null);
+  const handleDelete = async (id) => {
+    const adminPass = prompt('To confirm deletion, enter admin password:');
+    if (adminPass === import.meta.env.VITE_ADMIN_PASSWORD) {
+      await deleteDoc(doc(db, 'products', id));
+      fetchProducts();
+    } else {
+      alert('Incorrect password. Deletion cancelled.');
+    }
   };
 
-  const handleCloseFormModal = () => {
-    setIsFormModalOpen(false);
-    resetFormData();
-  };
-
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const filteredProducts = products.filter((product) => {
+    return (
+      product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.model.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <div className="products-page-container">
-      <h1 className="products-page-title">Product Catalog</h1>
-      <div className="product-overview-card">
-        <div className="add-product-button-container">
-          <button onClick={handleAddProduct} className="add-product-button">+ Add New Product</button>
-        </div>
-        {products.length === 0 ? (
-          <p className="no-products-message">No products found. Add new products to see them here!</p>
-        ) : (
-          <div className="product-table-wrapper">
-            <table className="product-table">
-              <thead>
-                <tr>
-                  <th>Brand</th>
-                  <th>Model</th>
-                  <th>Size</th>
-                  <th>Price</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => (
-                  <tr key={product.id}>
-                    <td>{product.brand}</td>
-                    <td>{product.model}</td>
-                    <td>{product.size}</td>
-                    <td>₱{parseFloat(product.price).toFixed(2)}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button onClick={() => handleViewDetails(product)}>View</button>
-                        <button onClick={() => handleEditProduct(product)}>Edit</button>
-                        <button onClick={() => handleDeleteProduct(product.id)} className="delete-button">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <h1 className="products-page-title">Products</h1>
+      <div className="controls-bar">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button
+          className="add-product-button"
+          onClick={() => {
+            setIsEditMode(false);
+            setFormData({ brand: '', model: '', price: '', size: '', description: '' });
+            setIsModalOpen(true);
+          }}
+        >
+          Add New Product
+        </button>
+        <button
+          className="add-product-button"
+          onClick={() => setShowResetModal(true)}
+        >
+          Reset Product ID Counter
+        </button>
       </div>
 
-      {/* View Modal */}
-      {isModalOpen && selectedProduct && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>{selectedProduct.brand} - {selectedProduct.model}</h2>
-            <p><strong>Size:</strong> {selectedProduct.size}</p>
-            <p><strong>Price:</strong> ₱{selectedProduct.price.toFixed(2)}</p>
-            <p><strong>Description:</strong> {selectedProduct.description}</p>
-            <button onClick={handleCloseModal}>Close</button>
-          </div>
+      {filteredProducts.length === 0 ? (
+        <p className="no-products-message">No products found.</p>
+      ) : (
+        <div className="product-table-wrapper">
+          <table className="product-table">
+            <thead>
+              <tr>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Price</th>
+                <th>Size</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredProducts.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.brand}</td>
+                  <td>{product.model}</td>
+                  <td>{product.price}</td>
+                  <td>{product.size}</td>
+                  <td>{product.description}</td>
+                  <td className="action-buttons">
+                    <button onClick={() => setViewProduct(product)}>View</button>
+                    <button onClick={() => handleEdit(product)}>Edit</button>
+                    <button className="delete-button" onClick={() => handleDelete(product.id)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
-      {/* Add/Edit Form Modal */}
-      {isFormModalOpen && (
+      {isModalOpen && (
         <div className="modal-overlay">
           <div className="form-modal-content">
-            <h2>{formMode === 'add' ? 'Add New Product' : 'Edit Product'}</h2>
-            <form onSubmit={handleFormSubmit}>
-              {['brand', 'model', 'size', 'price'].map((field) => (
-                <div className="form-group" key={field}>
-                  <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
-                  <input
-                    type={field === 'price' ? 'number' : 'text'}
-                    id={field}
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleFormChange}
-                    required
-                    step={field === 'price' ? '0.01' : undefined}
-                  />
-                </div>
-              ))}
+            <h2>{isEditMode ? 'Edit Product' : 'Add New Product'}</h2>
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="description">Description:</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows="3"
-                  value={formData.description}
-                  onChange={handleFormChange}
-                />
+                <label>Brand</label>
+                <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} required />
+              </div>
+              <div className="form-group">
+                <label>Model</label>
+                <input type="text" name="model" value={formData.model} onChange={handleInputChange} required />
+              </div>
+              <div className="form-group">
+                <label>Price</label>
+                <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
+              </div>
+              <div className="form-group">
+                <label>Size</label>
+                <input type="text" name="size" value={formData.size} onChange={handleInputChange} required />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea name="description" value={formData.description} onChange={handleInputChange} required />
               </div>
               <div className="form-actions">
-                <button type="button" onClick={handleCloseFormModal}>Cancel</button>
-                <button type="submit">{formMode === 'add' ? 'Add Product' : 'Save Changes'}</button>
+                <button type="submit">{isEditMode ? 'Update' : 'Add'} Product</button>
+                <button type="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {viewProduct && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Product Details</h2>
+            <p><strong>Brand:</strong> {viewProduct.brand}</p>
+            <p><strong>Model:</strong> {viewProduct.model}</p>
+            <p><strong>Price:</strong> {viewProduct.price}</p>
+            <p><strong>Size:</strong> {viewProduct.size}</p>
+            <p><strong>Description:</strong> {viewProduct.description}</p>
+            <button onClick={() => setViewProduct(null)}>Close</button>
+          </div>
+        </div>
+      )}
+
+      <ResetCounterModal isOpen={showResetModal} onClose={() => setShowResetModal(false)} />
     </div>
   );
 };

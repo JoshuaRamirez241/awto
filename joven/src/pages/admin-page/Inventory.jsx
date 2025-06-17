@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../firebase';
-import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 import '../../styles/admin-styles/Inventory.css';
 
 const Inventory = () => {
@@ -9,31 +14,33 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('name-asc');
 
+  // Restock Modal State
+  const [isRestockOpen, setIsRestockOpen] = useState(false);
+  const [restockList, setRestockList] = useState([]);
+  const [restockSearch, setRestockSearch] = useState('');
+
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productList = snapshot.docs.map(doc => ({
+      const productList = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       setProducts(productList);
     });
-
     return () => unsub();
   }, []);
 
   useEffect(() => {
     let filtered = [...products];
 
-    // Search filter
     if (searchTerm.trim() !== '') {
       const lowerTerm = searchTerm.toLowerCase();
-      filtered = filtered.filter(p => {
+      filtered = filtered.filter((p) => {
         const combined = `${p.brand} ${p.model} ${p.size}`.toLowerCase();
         return combined.includes(lowerTerm);
       });
     }
 
-    // Sort logic
     switch (sortOption) {
       case 'name-asc':
         filtered.sort((a, b) =>
@@ -58,23 +65,44 @@ const Inventory = () => {
     setFilteredProducts(filtered);
   }, [products, searchTerm, sortOption]);
 
-  const handleStockChange = (e, id) => {
-    const newStock = e.target.value;
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, stock: newStock } : p))
+  const handleRestockInput = (e, id) => {
+    const newQty = parseInt(e.target.value || 0);
+    setRestockList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, qty: newQty } : item))
     );
   };
 
-  const handleStockUpdate = async (e, id) => {
-    if (e.key === 'Enter') {
-      const updatedProduct = products.find((p) => p.id === id);
-      try {
-        const productRef = doc(db, 'products', id);
-        await updateDoc(productRef, { stock: Number(updatedProduct.stock) });
-        console.log('Stock updated');
-      } catch (err) {
-        console.error('Error updating stock:', err);
+  const openRestockModal = () => {
+    setRestockList([]);
+    setRestockSearch('');
+    setIsRestockOpen(true);
+  };
+
+  const handleSearchRestockProduct = () => {
+    const search = restockSearch.toLowerCase();
+    const found = products
+      .filter((p) => {
+        const fullName = `${p.brand} ${p.model} ${p.size}`.toLowerCase();
+        return fullName.includes(search);
+      })
+      .map((p) => ({ ...p, qty: 0 }));
+
+    setRestockList(found);
+  };
+
+  const saveRestocks = async () => {
+    try {
+      for (const item of restockList) {
+        if (item.qty > 0) {
+          const ref = doc(db, 'products', item.id);
+          const current = products.find((p) => p.id === item.id);
+          const updatedStock = Number(current.stock || 0) + Number(item.qty);
+          await updateDoc(ref, { stock: updatedStock });
+        }
       }
+      setIsRestockOpen(false);
+    } catch (error) {
+      console.error('Error saving restocks:', error);
     }
   };
 
@@ -101,6 +129,10 @@ const Inventory = () => {
           <option value="stock-asc">Stock Low to High</option>
           <option value="stock-desc">Stock High to Low</option>
         </select>
+
+        <button onClick={openRestockModal} className="restock-btn">
+          Restock
+        </button>
       </div>
 
       <div className="inventory-card">
@@ -121,18 +153,14 @@ const Inventory = () => {
                   const totalPrice = product.stock * product.price;
 
                   return (
-                    <tr key={product.id} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
+                    <tr
+                      key={product.id}
+                      className={index % 2 === 0 ? 'even-row' : 'odd-row'}
+                    >
                       <td>{productName}</td>
                       <td>
                         <div className="stock-cell">
-                          <input
-                            type="number"
-                            min="0"
-                            value={product.stock}
-                            onChange={(e) => handleStockChange(e, product.id)}
-                            onKeyDown={(e) => handleStockUpdate(e, product.id)}
-                            className="stock-input"
-                          />
+                          {product.stock}
                           {Number(product.stock) < 4 && (
                             <span className="low-stock-warning">Low Stock</span>
                           )}
@@ -156,6 +184,58 @@ const Inventory = () => {
           </table>
         </div>
       </div>
+
+      {isRestockOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Restock Products</h2>
+            <input
+              type="text"
+              placeholder="Search product to restock..."
+              className="search-bar"
+              value={restockSearch}
+              onChange={(e) => setRestockSearch(e.target.value)}
+            />
+            <button onClick={handleSearchRestockProduct} className="search-btn">
+              Search
+            </button>
+
+            <div className="restock-table-wrapper">
+              <table className="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Add Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {restockList.map((item) => (
+                    <tr key={item.id}>
+                      <td>{`${item.brand} ${item.model} ${item.size}`}</td>
+                      <td>
+                        <input
+                          type="number"
+                          min="0"
+                          value={item.qty}
+                          onChange={(e) => handleRestockInput(e, item.id)}
+                          className="stock-input"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="modal-actions">
+              <button onClick={() => setIsRestockOpen(false)}>Cancel</button>
+              <button onClick={saveRestocks} className="save-btn">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
