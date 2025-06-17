@@ -18,6 +18,7 @@ import ViewProduct from './components/ViewProduct';
 
 // Admin Layout & Pages
 import AdminDashboard from './pages/admin-page/AdminDashboard';
+import DashboardOverview from './pages/admin-page/DashboardOverview';
 import AdminSales from './pages/admin-page/Sales';
 import AdminInventory from './pages/admin-page/Inventory';
 import AdminProducts from './pages/admin-page/Products';
@@ -118,7 +119,7 @@ function App() {
             </RequireVerifiedEmail>
           }
         >
-          <Route index element={<AdminSales />} />
+          <Route index element={<DashboardOverview />} />
           <Route path="sales" element={<AdminSales />} />
           <Route path="inventory" element={<AdminInventory />} />
           <Route path="products" element={<AdminProducts />} />

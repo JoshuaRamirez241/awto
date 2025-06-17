@@ -1,0 +1,186 @@
+/* src/styles/admin-styles/DashboardOverview.css */
+
+/* Important: Ensure these variables are consistent with your AdminDashboard.css or define them globally */
+/* If AdminDashboard.css is imported globally, these might not be needed here if already defined */
+:root {
+    --primary-color: #5A67D8; /* Ventorio blue */
+    --secondary-color: #EDF2F7; /* Light gray for backgrounds */
+    --text-color: #2D3748; /* Dark text */
+    --light-text-color: #A0AEC0; /* Lighter text for labels/secondary */
+    --background-color: #F8F9FA; /* Page background */
+    --card-background: #FFFFFF; /* Card and sidebar background */
+    --border-color: #E2E8F0;
+    --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure body font is consistent across your app if not already */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+}
+
+/* Page Title Styling */
+.dashboard-overview-title {
+    font-size: 1.8em; /* Match h2 in AdminDashboard.css */
+    color: var(--text-color);
+    margin-bottom: 25px; /* Spacing below title */
+    font-weight: 600;
+}
+
+/* Container for all stat cards */
+.stat-cards-container {
+    display: grid;
+    /* This will create a responsive grid: 
+       - auto-fit: allows items to fit as many as possible
+       - minmax(250px, 1fr): each item will be at least 250px wide, growing to fill space */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px; /* Space between cards */
+    margin-bottom: 30px; /* Space below the cards if more content follows */
+}
+
+/* Styling for each individual stat card */
+.stat-card {
+    background-color: var(--card-background); /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: var(--shadow-light); /* Subtle shadow */
+    padding: 25px; /* Inner spacing */
+    display: flex; /* Use flexbox for icon and text layout */
+    align-items: center; /* Vertically align items in the center */
+    gap: 18px; /* Space between icon and text */
+    transition: transform 0.2s ease-in-out; /* Smooth hover effect */
+    min-height: 100px; /* Ensure consistent height for cards */
+}
+
+.stat-card:hover {
+    transform: translateY(-3px); /* Lift effect on hover */
+    box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.1), 0 3px 6px -2px rgba(0, 0, 0, 0.08); /* Slightly larger shadow on hover */
+}
+
+/* Icon Container */
+.stat-card-icon {
+    width: 55px; /* Fixed width for the icon circle */
+    height: 55px; /* Fixed height for the icon circle */
+    border-radius: 50%; /* Make it a perfect circle */
+    display: flex;
+    justify-content: center; /* Center icon horizontally */
+    align-items: center; /* Center icon vertically */
+    font-size: 1.8em; /* Size of the icon */
+    color: white; /* Color of the icon */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Shadow for the icon circle */
+}
+
+/* Specific colors for each card's icon background - YOU NEED TO MAP THESE IN JS */
+/* These class names will be added dynamically to .stat-card-icon based on card type */
+.icon-total-sales { background-color: #5A67D8; } /* Ventorio blue */
+.icon-inventory-items { background-color: #E53E3E; } /* Red */
+.icon-products-sold { background-color: #805AD5; } /* Purple */
+.icon-stock-on-hand { background-color: #F6AD55; } /* Orange */
+
+/* Text Content within the card */
+.stat-card-content {
+    display: flex;
+    flex-direction: column; /* Stack title and value vertically */
+}
+
+.stat-card-title {
+    font-size: 0.95em; /* Size for the label (e.g., "Total Sales") */
+    color: var(--light-text-color); /* Lighter text color */
+    margin-bottom: 4px; /* Space between title and value */
+    font-weight: 500;
+}
+
+.stat-card-value {
+    font-size: 1.8em; /* Larger size for the actual number/value */
+    font-weight: 700; /* Bold for the value */
+    color: var(--text-color); /* Darker text color for prominence */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .stat-cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust minimum width for smaller screens */
+        gap: 15px;
+    }
+    .stat-card {
+        padding: 20px;
+    }
+    .stat-card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+    .stat-card-value {
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-cards-container {
+        grid-template-columns: 1fr; /* Single column layout on very small screens */
+        gap: 15px;
+    }
+    .stat-card {
+        flex-direction: row; /* Keep icon and text side-by-side */
+        justify-content: flex-start;
+    }
+    .dashboard-overview-title {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+}
+
+/* src/styles/admin-styles/DashboardOverview.css */
+
+/* ... (previous CSS for :root, body, dashboard-overview-title, stat-cards-container, stat-card, etc.) ... */
+
+/* Charts Section Container */
+.charts-section-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Two columns, responsive */
+    gap: 25px; /* Space between chart cards */
+    margin-top: 30px; /* Space from the summary cards above */
+}
+
+.chart-card {
+    background-color: var(--card-background);
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the start */
+}
+
+.chart-title {
+    font-size: 1.3em;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Ensure Recharts container takes full width of its parent */
+.recharts-wrapper {
+    width: 100% !important; /* Override default inline width if necessary */
+}
+
+/* Responsive adjustments for charts */
+@media (max-width: 992px) {
+    .charts-section-container {
+        grid-template-columns: 1fr; /* Stack charts on smaller tablets/laptops */
+    }
+}
+
+@media (max-width: 576px) {
+    .charts-section-container {
+        gap: 20px;
+    }
+    .chart-card {
+        padding: 20px;
+    }
+    .chart-title {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    
+}
