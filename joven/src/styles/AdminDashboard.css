@@ -283,6 +283,92 @@ button:nth-child(3) { background-color: #e74c3c; color: white; } /* Delete */
 .form-cancel-button:hover {
   background:#dc2626; transform: translateY(-2px); box-shadow:0 4px 6px rgba(0,0,0,0.1);
 }
+.staff-container {
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.staff-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.staff-content {
+  display: flex;
+  gap: 2rem;
+}
+
+.staff-form-section,
+.staff-list-section {
+  flex: 1;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.staff-form input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.staff-form button {
+  background-color: #1e88e5;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+.staff-form button:hover {
+  background-color: #1565c0;
+}
+
+.staff-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.staff-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.staff-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #2196f3;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.staff-info small {
+  color: gray;
+}
+
 
 
 
