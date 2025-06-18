@@ -23,7 +23,7 @@ const Staffs = () => {
       setStaffs(staffList);
     } catch (error) {
       console.error('Error fetching staff:', error);
-      alert('Failed to load staff data.');
+      alert('Faileds to load staff data.');
     }
   };
 

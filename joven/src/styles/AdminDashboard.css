@@ -368,6 +368,137 @@ button:nth-child(3) { background-color: #e74c3c; color: white; } /* Delete */
 .staff-info small {
   color: gray;
 }
+/* If creating a new file, name it Staffs.css and import in Staffs.jsx */
+/* For existing AdminDashboard.css, append these styles */
+
+/* General container styling */
+.staff-container {
+    padding: 30px;
+    background-color: #f8f9fa; /* Light background for the content area */
+    min-height: calc(100vh - 60px); /* Adjust based on your header/footer */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    color: #333;
+}
+
+/* Header Styling */
+.staff-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Subtle separator */
+}
+
+.staff-header h2 {
+    font-size: 2.2em;
+    color: #2c3e50; /* Darker heading color */
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.staff-header h2 .icon {
+    margin-right: 10px;
+    color: #4a90e2; /* Icon color */
+}
+
+/* Main content layout (Add Staff Form & Current Staff List) */
+.staff-content {
+    display: flex;
+    gap: 30px; /* Space between the two main sections */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    align-items: flex-start; /* Align sections to the top */
+}
+
+/* Individual section styling (Add New Staff & Current Staff) */
+.staff-form-section,
+.staff-list-section {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* More prominent shadow */
+    padding: 30px;
+    flex: 1; /* Allow sections to grow and shrink */
+    min-width: 300px; /* Minimum width before wrapping */
+}
+
+.staff-form-section h3,
+.staff-list-section h3 {
+    font-size: 1.6em;
+    color: #34495e;
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f2f4f6; /* Underline for section titles */
+    padding-bottom: 10px;
+}
+
+/* Add Staff Form Styling */
+.staff-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between form fields */
+}
+
+.staff-form input {
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Slightly more rounded */
+    font-size: 1em;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Inner shadow for depth */
+}
+
+.staff-form input:focus {
+    outline: none;
+    border-color: #4a90e2; /* Blue border on focus */
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.staff-form button {
+    background-color: #4a90e2; /* Primary blue button */
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.staff-form button:hover {
+    background-color: #357bd8;
+    transform: translateY(-2px);
+}
+
+.staff-form button:active {
+    background-color: #2a6cb8;
+    transform: translateY(0);
+}
+
+.staff-form button:disabled {
+    background-color: #aebfd0; /* Lighter blue when disabled */
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Current Staff List Styling */
+.no-staff {
+    color: #777;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    border: 1px dashed #e0e0e0;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+}
+
+.staff-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
 
 
