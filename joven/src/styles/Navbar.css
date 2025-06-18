@@ -1,0 +1,244 @@
+/* ================= NAVIGATION BAR ================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #0a3d62;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar--hidden {
+  transform: translateY(-100%);
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-weight: bold;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+}
+
+.right-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: #d1d8e0;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.create-account-button,
+.logout-button {
+  background-color: #f39c12;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1.1rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.25s ease;
+}
+
+.logout-button:hover,
+.create-account-button:hover {
+  background-color: #34495e;
+}
+
+/* ============== PROFILE DROPDOWN ============== */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-info {
+  background-color: transparent;
+  border: 2px solid #f39c12;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.profile-info:hover {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background-color: #fff;
+  min-width: 140px;
+  border-radius: 6px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: transparent;
+  color: #0a3d62;
+  text-align: left;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* ============== RESPONSIVE BREAKPOINTS ============== */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.75rem 1rem;
+  }
+
+  .left-nav {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .right-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+  }
+
+  .brand-name {
+    font-size: 1.1rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .create-account-button,
+  .logout-button {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .profile-info {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.9rem;
+  }
+
+  .dropdown-menu {
+    right: 1rem;
+  }
+
+  .dropdown-item {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+
+  .right-nav {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+.icon-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.icon-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #fff;
+  padding: 0.5rem 0.8rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transform: scale(1.05);
+}
+
+.icon-button .label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .icon-button .label {
+    display: inline;
+  }
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: crimson;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  line-height: 1;
+}

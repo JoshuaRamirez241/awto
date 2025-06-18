@@ -4,58 +4,68 @@ import "../styles/Filter.css";
 
 const WHEEL_TIRE_FILTERS = [
   {
-    name: "Brand",
-    options: ["American Racing", "BBS", "Enkei", "Konig", "Rays", "Volk"],
-    multiSelect: true,
-  },
-  {
-    name: "Diameter",
-    options: ['14"', '15"', '16"', '17"', '18"', '19"', '20"', '22"'],
-    multiSelect: true,
-  },
-  {
-    name: "Width",
-    options: ['6"', '7"', '8"', '9"', '10"', '12"'],
-    multiSelect: true,
-  },
-  {
-    name: "Bolt Pattern",
-    options: ["4x100", "5x114.3", "5x120", "6x139.7"],
-    multiSelect: true,
-  },
-  {
-    name: "Offset",
-    options: ["+20", "+25", "+30", "+35", "+40"],
-    multiSelect: true,
-  },
-  {
-    name: "Lug Count",
-    options: ["4", "5", "6"],
-    multiSelect: true,
-  },
-  {
-    name: "Material",
+    name: "brand",
+    label: "Brand",
     options: [
-      "Cast Aluminum",
-      "Flow Formed Aluminum",
-      "Forged Aluminum",
-      "Steel",
+      "ARIVO", "ACCELERA", "ADVANCE MIX", "ALLIANCE", "ALTURA",
+      "AMP", "ARISUN", "BF GOODRICH", "BRIDGESTONE", "CST",
     ],
     multiSelect: true,
   },
   {
-    name: "Finish",
+    name: "diameter",
+    label: "Diameter",
+    options: ['14"', '15"', '16"', '17"', '18"', '19"', '20"', '22"'],
+    multiSelect: true,
+  },
+  {
+    name: "width",
+    label: "Width",
+    options: ['6"', '7"', '8"', '9"', '10"', '12"'],
+    multiSelect: true,
+  },
+  {
+    name: "boltPattern",
+    label: "Bolt Pattern",
+    options: ["4x100", "5x114.3", "5x120", "6x139.7"],
+    multiSelect: true,
+  },
+  {
+    name: "offset",
+    label: "Offset",
+    options: ["+20", "+25", "+30", "+35", "+40"],
+    multiSelect: true,
+  },
+  {
+    name: "lugCount",
+    label: "Lug Count",
+    options: ["4", "5", "6"],
+    multiSelect: true,
+  },
+  {
+    name: "material",
+    label: "Material",
+    options: [
+      "Cast Aluminum", "Flow Formed Aluminum", "Forged Aluminum", "Steel",
+    ],
+    multiSelect: true,
+  },
+  {
+    name: "finish",
+    label: "Finish",
     options: ["Gloss Black", "Matte Black", "Chrome", "Silver", "Gunmetal"],
     multiSelect: true,
   },
   {
-    name: "New",
+    name: "new",
+    label: "New",
     options: ["Yes"],
     multiSelect: false,
   },
   {
-    name: "Price Range",
-    options: ["$0 - $100", "$100 - $200", "$200 - $300", "$300+"],
+    name: "price",
+    label: "Price Range",
+    options: [" ₱0 -  ₱100", " ₱100 -  ₱200", " ₱200 -  ₱300", " ₱300+"],
     multiSelect: false,
   },
 ];
@@ -63,13 +73,12 @@ const WHEEL_TIRE_FILTERS = [
 const Filter = ({ onChange }) => {
   const [expanded, setExpanded] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({});
+  const [searchTerms, setSearchTerms] = useState({});
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
     const filtersToSend = Object.fromEntries(
-      Object.entries(selectedFilters).map(([key, set]) => [
-        key,
-        Array.from(set),
-      ])
+      Object.entries(selectedFilters).map(([key, set]) => [key, Array.from(set)])
     );
     onChange && onChange(filtersToSend);
   }, [selectedFilters, onChange]);
@@ -109,77 +118,120 @@ const Filter = ({ onChange }) => {
     setSelectedFilters({});
   };
 
+  const handleSearchChange = (filterName, value) => {
+    setSearchTerms((prev) => ({ ...prev, [filterName]: value }));
+  };
+
   return (
-    <div className="filters">
-      <div className="filters-header">
-        <h3>Active Filters ({Object.keys(selectedFilters).length})</h3>
-        {Object.keys(selectedFilters).length > 0 && (
-          <button onClick={clearAll} className="clear-btn">
-            Clear All
-          </button>
-        )}
-      </div>
+    <>
+      <button
+        className="filter-toggle-btn"
+        onClick={() => setIsMobileOpen(true)}
+      >
+        Filters
+      </button>
 
-      {WHEEL_TIRE_FILTERS.map(({ name, options, multiSelect }) => {
-        const isExpanded = expanded.includes(name);
-        const selectedSet = selectedFilters[name] || new Set();
+      <div
+        className={`filter-overlay ${isMobileOpen ? "visible" : ""}`}
+        onClick={() => setIsMobileOpen(false)}
+      ></div>
 
-        return (
-          <div key={name}>
-            <div
-              className="filter-header"
-              onClick={() => toggleExpand(name)}
-              tabIndex={0}
-              role="button"
-              aria-expanded={isExpanded}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") toggleExpand(name);
-              }}
-            >
-              <span>{name}</span>
-              <button
-                className="clear-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  clearFilter(name);
-                }}
-                aria-label={`Clear filter ${name}`}
-                disabled={selectedSet.size === 0}
-                type="button"
+      <div className={`filters ${isMobileOpen ? "open" : ""}`}>
+        <div className="filters-header">
+          <h3>Active Filters ({Object.keys(selectedFilters).length})</h3>
+          {Object.keys(selectedFilters).length > 0 && (
+            <button onClick={clearAll} className="clear-btn">
+              Clear All
+            </button>
+          )}
+        </div>
+
+        <button
+          className="clear-btn"
+          style={{ marginBottom: "10px" }}
+          onClick={() => setIsMobileOpen(false)}
+        >
+          ✕ Close
+        </button>
+
+        {WHEEL_TIRE_FILTERS.map(({ name, label, options, multiSelect }) => {
+          const isExpanded = expanded.includes(name);
+          const selectedSet = selectedFilters[name] || new Set();
+          const search = searchTerms[name] || "";
+
+          const filteredOptions =
+            options.length > 5
+              ? options.filter((opt) =>
+                  opt.toLowerCase().includes(search.toLowerCase())
+                )
+              : options;
+
+          return (
+            <div key={name}>
+              <div
+                className="filter-header"
+                onClick={() => toggleExpand(name)}
+                tabIndex={0}
+                role="button"
+                aria-expanded={isExpanded}
               >
-                &times;
-              </button>
-              <span>{isExpanded ? "-" : "+"}</span>
-            </div>
-
-            {isExpanded && (
-              <div className="filter-content" role="group" aria-label={`${name} filter options`}>
-                {options.map((option) => {
-                  const selected = selectedSet.has(option);
-                  return (
-                    <div
-                      key={option}
-                      className={`filter-option ${selected ? "selected" : ""}`}
-                      onClick={() => toggleOption(name, option, multiSelect)}
-                      tabIndex={0}
-                      role="checkbox"
-                      aria-checked={selected}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          toggleOption(name, option, multiSelect);
-                        }
-                      }}
-                    >
-                      {option}
-                    </div>
-                  );
-                })}
+                <span>{label}</span>
+                <button
+                  className="clear-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearFilter(name);
+                  }}
+                  aria-label={`Clear filter ${label}`}
+                  disabled={selectedSet.size === 0}
+                >
+                  &times;
+                </button>
+                <span>{isExpanded ? "-" : "+"}</span>
               </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
+
+              {isExpanded && (
+                <div
+                  className="filter-content"
+                  role="group"
+                  aria-label={`${label} filter options`}
+                >
+                  {options.length > 5 && (
+                    <input
+                      type="text"
+                      placeholder={`Search ${label}...`}
+                      className="filter-search"
+                      value={search}
+                      onChange={(e) =>
+                        handleSearchChange(name, e.target.value)
+                      }
+                    />
+                  )}
+
+                  {filteredOptions.map((option) => {
+                    const selected = selectedSet.has(option);
+                    return (
+                      <div
+                        key={option}
+                        className={`filter-option ${selected ? "selected" : ""}`}
+                        onClick={() => toggleOption(name, option, multiSelect)}
+                        tabIndex={0}
+                        role="checkbox"
+                        aria-checked={selected}
+                      >
+                        {option}
+                      </div>
+                    );
+                  })}
+
+                  {filteredOptions.length === 0 && <p>No options found.</p>}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 

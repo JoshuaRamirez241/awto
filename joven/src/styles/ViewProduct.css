@@ -1,75 +1,245 @@
+/* ================= VIEW PRODUCT PAGE ================= */
 .view-product {
-  display: flex;
-  gap: 40px;
-  padding: 40px;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  background-color: #f4f4f4;
+  color: #1e1e1e;
 }
 
+/* Back Button */
+.back-button {
+  background: none;
+  border: none;
+  color: #0a3d62;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+/* Product Container */
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  gap: 2rem;
+}
+
+/* Product Images Section */
 .product-images {
   flex: 1;
+  min-width: 300px;
 }
 
 .main-image {
   width: 100%;
-  max-width: 500px;
+  border-radius: 8px;
   object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-  cursor: zoom-in;
+  max-height: 400px;
+  border: 2px solid #ccc;
 }
 
-.main-image:hover {
-  transform: scale(1.1);
-}
-
+/* Thumbnail Images */
 .thumbnail-row {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .thumbnail {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
-  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s ease-in-out;
 }
 
+.thumbnail:hover,
+.thumbnail.active {
+  border: 2px solid #0a3d62;
+}
+
+/* Product Info Section */
 .product-info {
   flex: 1;
+  min-width: 300px;
+}
+
+.tag {
+  background-color: #0a3d62;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .brand-logo {
-  font-size: 18px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+.product-name {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.review-label {
+  font-size: 0.95rem;
   color: #555;
+  margin-bottom: 1rem;
 }
 
-.product-title {
-  font-size: 28px;
-  margin-bottom: 10px;
+.finish-label {
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
-.price {
-  font-size: 22px;
-  color: #0a3d62;
-  margin: 10px 0;
+/* Options Section */
+.options-section {
+  margin-bottom: 1.5rem;
 }
 
-.add-to-cart {
-  background-color: #0a3d62;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  margin-top: 15px;
+.options-section select,
+.qty-input {
+  padding: 0.6rem;
+  margin-right: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.qty-input {
+  width: 80px;
+}
+
+/* Fitment Alert */
+.fitment-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 0.8rem 1rem;
+  border-left: 4px solid #ffc107;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* Expandable Details */
+.details-section,
+.desc-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+details summary {
+  font-weight: bold;
   cursor: pointer;
-  border-radius: 5px;
+  margin-bottom: 0.5rem;
 }
 
-.product-description {
-  margin-top: 30px;
+details p {
+  margin-top: 0.5rem;
+  color: #444;
 }
 
-.product-description h3 {
-  margin-bottom: 10px;
+/* Reserve Button */
+.reserve-button {
+  background-color: #e84393;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: 1rem;
+}
+
+.reserve-button:hover {
+  background-color: #d63072;
+  box-shadow: 0 4px 10px rgba(232, 67, 147, 0.3);
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 1024px) {
+  .product-container {
+    flex-direction: column;
+  }
+
+  .product-images,
+  .product-info {
+    width: 100%;
+  }
+
+  .main-image {
+    max-height: 300px;
+  }
+
+  .brand-logo {
+    font-size: 1.25rem;
+  }
+
+  .product-name {
+    font-size: 1.5rem;
+  }
+
+  .reserve-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .view-product {
+    padding: 1rem;
+  }
+
+  .product-container {
+    padding: 1.25rem;
+  }
+
+  .main-image {
+    max-height: 250px;
+  }
+
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+
+  .qty-input {
+    width: 100%;
+  }
+
+  .options-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .options-section select,
+  .qty-input {
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+
+  .reserve-button {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
 }

@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
-const LoginSection = ({ onClose }) => {
-  const navigate = useNavigate();
+const LoginSection = ({ onClose, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
-  // ✅ Update: allow login for admin and users using gmail
   const isAllowedEmail = () => {
     const trimmedEmail = email.trim().toLowerCase();
     return trimmedEmail.endsWith('@gmail.com');
@@ -40,16 +38,13 @@ const LoginSection = ({ onClose }) => {
       }
 
       const userData = userSnap.data();
-      const role = userData.role;
 
       localStorage.setItem('isOTPVerified', 'true');
+      localStorage.setItem('userData', JSON.stringify(userData)); // Optional
 
-      if (role === 'Admin') navigate('/admin-dashboard');
-      else if (role === 'User') navigate('/user-dashboard');
-      else if (role === 'Staff') navigate('/staff-dashboard');
-      else setError('Unknown user role.');
+      if (onLoginSuccess) onLoginSuccess(userData); // 🔥 Send user data to parent
+      if (onClose) onClose(); // 🔒 Close login modal
 
-      if (onClose) onClose();
     } catch (err) {
       console.error(err);
       setError('Invalid email or password.');

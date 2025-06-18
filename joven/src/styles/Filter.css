@@ -13,8 +13,52 @@
 /* Responsive: full width on small screens */
 @media (max-width: 768px) {
   .filters {
-    max-width: 100%;
-    margin-bottom: 20px;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100vh;
+    width: 85%;
+    max-width: 300px;
+    background: #fff;
+    z-index: 999;
+    overflow-y: auto;
+    transition: left 0.3s ease-in-out;
+    padding: 1rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .filters.open {
+    left: 0;
+  }
+
+  .filter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+    display: none;
+  }
+
+  .filter-overlay.visible {
+    display: block;
+  }
+
+  .filter-toggle-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    z-index: 1000;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -69,35 +113,12 @@
   position: relative;
 }
 
-.filter-header:focus {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
 .filter-header span:last-child {
   font-size: 1.4rem;
   user-select: none;
   margin-left: 10px;
   font-weight: 700;
   line-height: 0;
-}
-
-.filter-header button.clear-btn {
-  font-size: 1.2rem;
-  line-height: 1;
-  padding: 0 6px;
-  background: transparent;
-  color: #888;
-  border: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  user-select: none;
-}
-
-.filter-header button.clear-btn:hover,
-.filter-header button.clear-btn:focus {
-  color: #007bff;
-  outline: none;
 }
 
 .filter-content {
@@ -107,17 +128,6 @@
   margin-bottom: 12px;
   max-height: 240px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
-}
-
-.filter-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.filter-content::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
 }
 
 .filter-option {
@@ -128,17 +138,14 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.95rem;
-  user-select: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   display: flex;
   align-items: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.filter-option:hover,
-.filter-option:focus {
+.filter-option:hover {
   background-color: #e9f0fe;
   border-color: #007bff;
-  outline: none;
   color: #007bff;
 }
 
@@ -148,25 +155,16 @@
   border-color: #0056b3;
 }
 
-.filter-option.selected:hover,
-.filter-option.selected:focus {
-  background-color: #0056b3;
-  border-color: #003f7f;
-  color: #fff;
+.filter-search {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
-/* Keyboard focus styles for divs marked as filter-option */
-.filter-option:focus-visible {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
-/* Scrollbar styling for filter content */
-.filter-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* For better touch targets and spacing on mobile */
+/* For mobile spacing */
 @media (max-width: 480px) {
   .filter-option {
     padding: 12px 14px;
@@ -177,4 +175,3 @@
     font-size: 1.1rem;
   }
 }
-

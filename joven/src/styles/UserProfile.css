@@ -1,0 +1,87 @@
+.user-profile-page {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-sidebar {
+  width: 240px;
+  background-color: #0a3d62;
+  color: white;
+  padding: 2rem 1rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-sidebar h2 {
+  margin-bottom: 2rem;
+}
+
+.profile-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.profile-sidebar li {
+  margin: 1rem 0;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.profile-sidebar li:hover,
+.profile-sidebar li.active {
+  background-color: #1e6ab1;
+}
+
+.profile-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background: #f5f5f5;
+}
+
+.profile-content h2 {
+  margin-bottom: 1.5rem;
+}
+
+.profile-photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profile-photo-section img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  border: 3px solid #ccc;
+}
+
+.profile-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 500px;
+}
+
+.profile-form input {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.profile-form button {
+  background-color: #0a3d62;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.profile-form button:hover {
+  background-color: #125b8c;
+}
